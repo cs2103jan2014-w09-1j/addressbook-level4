@@ -121,8 +121,8 @@ public abstract class AddressBookSystemTest {
             Model expectedModel) {
         assertEquals(expectedCommandInput, getCommandBox().getInput());
         assertEquals(expectedResultMessage, getResultDisplay().getText());
-        assertEquals(expectedModel, getModel());
-        assertEquals(expectedModel.getAddressBook(), testApp.readStorageAddressBook());
+        assertEquals(expectedModel, getTestApp().getModel());
+        assertEquals(expectedModel.getAddressBook(), getTestApp().readStorageAddressBook());
         assertListMatching(getPersonListPanel(), expectedModel.getFilteredPersonList());
     }
 
@@ -220,19 +220,16 @@ public abstract class AddressBookSystemTest {
         try {
             assertEquals("", getCommandBox().getInput());
             assertEquals("", getResultDisplay().getText());
-            assertListMatching(getPersonListPanel(), getModel().getFilteredPersonList());
+            assertListMatching(getPersonListPanel(), getTestApp().getModel().getFilteredPersonList());
             assertEquals(MainApp.class.getResource(FXML_FILE_FOLDER + DEFAULT_PAGE), getBrowserPanel().getLoadedUrl());
-            assertEquals("./" + testApp.getStorageSaveLocation(), getStatusBarFooter().getSaveLocation());
+            assertEquals("./" + getTestApp().getStorageSaveLocation(), getStatusBarFooter().getSaveLocation());
             assertEquals(SYNC_STATUS_INITIAL, getStatusBarFooter().getSyncStatus());
         } catch (Exception e) {
             throw new AssertionError("Starting state is wrong.", e);
         }
     }
 
-    /**
-     * Returns a defensive copy of the current model.
-     */
-    protected Model getModel() {
-        return testApp.getModel();
+    protected TestApp getTestApp() {
+        return testApp;
     }
 }

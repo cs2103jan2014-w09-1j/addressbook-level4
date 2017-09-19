@@ -58,7 +58,7 @@ public class AddCommandSystemTest extends AddressBookSystemTest {
 
     @Test
     public void add() throws Exception {
-        Model model = getModel();
+        Model model = getTestApp().getModel();
         /* Case: add a person without tags to a non-empty address book, command with leading spaces and trailing spaces
          * -> added
          */
@@ -121,13 +121,13 @@ public class AddCommandSystemTest extends AddressBookSystemTest {
 
         /* Case: filters the person list before adding -> added */
         executeCommand(FindCommand.COMMAND_WORD + " " + KEYWORD_MATCHING_MEIER);
-        assert getModel().getFilteredPersonList().size()
-                < getModel().getAddressBook().getPersonList().size();
+        assert getTestApp().getModel().getFilteredPersonList().size()
+                < getTestApp().getModel().getAddressBook().getPersonList().size();
         assertCommandSuccess(IDA);
 
         /* Case: add to empty address book -> added */
         executeCommand(ClearCommand.COMMAND_WORD);
-        assert getModel().getAddressBook().getPersonList().size() == 0;
+        assert getTestApp().getModel().getAddressBook().getPersonList().size() == 0;
         assertCommandSuccess(ALICE);
 
         /* Case: add a person with tags, command with parameters in random order -> added */
@@ -206,7 +206,7 @@ public class AddCommandSystemTest extends AddressBookSystemTest {
      * @see AddCommandSystemTest#assertCommandSuccess(ReadOnlyPerson)
      */
     private void assertCommandSuccess(String command, ReadOnlyPerson toAdd) {
-        Model expectedModel = getModel();
+        Model expectedModel = getTestApp().getModel();
         try {
             expectedModel.addPerson(toAdd);
         } catch (DuplicatePersonException dpe) {
@@ -241,7 +241,7 @@ public class AddCommandSystemTest extends AddressBookSystemTest {
      * @see AddressBookSystemTest#assertApplicationDisplaysExpected(String, String, Model)
      */
     private void assertCommandFailure(String command, String expectedResultMessage) {
-        Model expectedModel = getModel();
+        Model expectedModel = getTestApp().getModel();
 
         executeCommand(command);
         assertApplicationDisplaysExpected(command, expectedResultMessage, expectedModel);
