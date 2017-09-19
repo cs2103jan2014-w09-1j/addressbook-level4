@@ -33,7 +33,10 @@ import org.junit.Test;
 import seedu.address.commons.core.Messages;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditCommand;
+import seedu.address.logic.commands.FindCommand;
+import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.RedoCommand;
+import seedu.address.logic.commands.SelectCommand;
 import seedu.address.logic.commands.UndoCommand;
 import seedu.address.model.Model;
 import seedu.address.model.person.Address;
@@ -99,7 +102,7 @@ public class EditCommandSystemTest extends AddressBookSystemTest {
         /* ------------------ Performing edit operation while a filtered list is being shown ------------------------ */
 
         /* Case: filtered person list, edit index within bounds of address book and person list -> edited */
-        showPersonsWithName(KEYWORD_MATCHING_MEIER);
+        executeCommand(FindCommand.COMMAND_WORD + " " + KEYWORD_MATCHING_MEIER);
         index = INDEX_FIRST_PERSON;
         assert index.getZeroBased() < getModel().getFilteredPersonList().size();
         command = EditCommand.COMMAND_WORD + " " + index.getOneBased() + " " + NAME_DESC_BOB;
@@ -110,7 +113,9 @@ public class EditCommandSystemTest extends AddressBookSystemTest {
         /* Case: filtered person list, edit index within bounds of address book but out of bounds of person list
          * -> rejected
          */
-        showPersonsWithName(KEYWORD_MATCHING_MEIER);
+        executeCommand(FindCommand.COMMAND_WORD + " " + KEYWORD_MATCHING_MEIER);
+        assert getModel().getFilteredPersonList().size()
+                < getModel().getAddressBook().getPersonList().size();
         int invalidIndex = getModel().getAddressBook().getPersonList().size();
         assertCommandFailure(EditCommand.COMMAND_WORD + " " + invalidIndex + NAME_DESC_BOB,
                 Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
@@ -120,9 +125,12 @@ public class EditCommandSystemTest extends AddressBookSystemTest {
         /* Case: selects first card in the person list, edit a person -> edited, card selection remains unchanged but
          * browser url changes
          */
-        showAllPersons();
+        executeCommand(ListCommand.COMMAND_WORD);
+        assert getModel().getAddressBook().getPersonList().size()
+                == getModel().getFilteredPersonList().size();
         index = INDEX_FIRST_PERSON;
-        selectPerson(index);
+        executeCommand(SelectCommand.COMMAND_WORD + " " + index.getOneBased());
+        assert getPersonListPanel().getSelectedCardIndex() == index.getZeroBased();
         command = EditCommand.COMMAND_WORD + " " + index.getOneBased() + NAME_DESC_AMY + PHONE_DESC_AMY + EMAIL_DESC_AMY
                 + ADDRESS_DESC_AMY + TAG_DESC_FRIEND;
         // this can be misleading: card selection actually remains unchanged but the
